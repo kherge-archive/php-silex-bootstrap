@@ -1,0 +1,4 @@
+example:
+    path: /
+    defaults:
+        _controller: Example\Controller::showView
