@@ -1,0 +1,51 @@
+{
+    "name": "herrera-io/silex-bootstrap",
+    "description": "A Silex bootstrap project.",
+    "license": "MIT",
+    "keywords": ["silex", "bootstrap"],
+    "homepage": "https://github.com/herrera-io/php-silex-bootstrap",
+    "authors": [
+        {
+            "name": "Kevin Herrera",
+            "email": "kevin@herrera.io",
+            "homepage": "http://kevin.herrera.io/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/herrera-io/php-silex-bootstrap/issues"
+    },
+
+    "require": {
+        "php": ">=5.3.3",
+        "herrera-io/silex-wise": "~2.0",
+        "silex/silex": "~1.0",
+        "symfony/config": "~2.3",
+        "symfony/form": "~2.3",
+        "symfony/translation": "~2.3",
+        "symfony/twig-bridge": "~2.3",
+        "symfony/validator": "~2.3",
+        "symfony/yaml": "~2.3",
+        "twig/twig": "~1.8"
+    },
+
+    "require-dev": {
+        "herrera-io/phpunit-test-case": "~1.0",
+        "phpunit/phpunit": "~3.7"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "": "src/lib"
+        }
+    },
+
+    "config": {
+        "bin-dir": "bin",
+        "vendor-dir": "src/vendors"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
