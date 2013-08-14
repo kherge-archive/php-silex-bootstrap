@@ -1,0 +1,5 @@
+imports:
+    - { resource: services_dev.yml }
+
+phpunit:
+    class: Herrera\Silex\Test\PhpUnit

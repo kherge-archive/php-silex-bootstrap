@@ -1,0 +1,4 @@
+imports:
+    - { resource: parameters_dev.yml }
+
+phpunit: true
