@@ -17,7 +17,9 @@
 
     "require": {
         "php": ">=5.3.3",
+        "herrera-io/silex-active-link": "~1.0",
         "herrera-io/silex-wise": "~2.0",
+        "monolog/monolog": "~1.6",
         "silex/silex": "~1.0",
         "symfony/config": "~2.3",
         "symfony/form": "~2.3",
@@ -29,6 +31,7 @@
     },
 
     "require-dev": {
+        "herrera-io/go": "~2.0",
         "herrera-io/phpunit-test-case": "~1.0",
         "phpunit/phpunit": "~3.7"
     },
