@@ -1,0 +1,63 @@
+<?php
+
+use Symfony\Component\Console\Input\InputInterface as In;
+use Symfony\Component\Console\Output\OutputInterface as Out;
+
+task(
+    'server:run',
+    'Runs the application using the internal PHP web server.',
+    function (In $in, Out $out) {
+        $out->writeln(
+            sprintf(
+                'Running on %s:%d (mode: %s, debug: %s)...',
+                $in->getOption('host'),
+                $in->getOption('port'),
+                $in->getOption('mode'),
+                $in->getOption('debug') ? 'on' : 'off'
+            )
+        );
+
+        $logging = '';
+
+        if ($in->getOption('access')) {
+            $logging .= ' >> ' . escapeshellarg($in->getOption('access'));
+
+            $out->writeln(
+                sprintf(
+                    'Access Log: %s',
+                    $in->getOption('access')
+                )
+            );
+        }
+
+        if ($in->getOption('error')) {
+            $logging .= ' 2>> ' . escapeshellarg($in->getOption('error'));
+
+            $out->writeln(
+                sprintf(
+                    'Error Log: %s',
+                    $in->getOption('error')
+                )
+            );
+        }
+
+        passthru(
+            sprintf(
+                'APP_DEBUG=%d APP_MODE=%s php -S %s:%s -t %s%s',
+                $in->getOption('debug') ? 1 : 0,
+                $in->getOption('mode'),
+                escapeshellarg($in->getOption('host')),
+                escapeshellarg($in->getOption('port')),
+                escapeshellarg(__DIR__ . DIRECTORY_SEPARATOR . 'web'),
+                $logging
+            )
+        );
+    }
+);
+
+option('access', 'a', OPT_IS_REQUIRED, 'The access log file.');
+option('debug', 'd', OPT_NO_VALUE, 'Enable debugging?');
+option('error', 'e', OPT_IS_REQUIRED, 'The error log file.');
+option('host', null, OPT_IS_REQUIRED, 'The server host name.', 'localhost');
+option('mode', 'm', OPT_IS_REQUIRED, 'The application mode.', 'prod');
+option('port', 'p', OPT_IS_REQUIRED, 'The server port number.', 8000);
