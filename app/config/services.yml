@@ -1,0 +1,8 @@
+twig:
+    class: Silex\Provider\TwigServiceProvider
+    parameters:
+        twig.path: "%path.views%"
+        twig.options:
+            auto_reload: %debug%
+            cache: "%path.cache%/views"
+            debug: %debug%
