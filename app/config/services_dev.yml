@@ -1,2 +1,6 @@
 imports:
     - { resource: services.yml }
+
+monolog:
+    parameters:
+        monolog.level: 100

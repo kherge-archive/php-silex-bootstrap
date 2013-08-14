@@ -1,3 +1,9 @@
+monolog:
+    class: Silex\Provider\MonologServiceProvider
+    parameters:
+        monolog.level: 300
+        monolog.logfile: "%path.logs%/%mode%.log"
+
 twig:
     class: Silex\Provider\TwigServiceProvider
     parameters:
