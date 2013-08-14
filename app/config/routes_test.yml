@@ -1,2 +1,7 @@
 imports:
     - { resource: routes_dev.yml }
+
+phpunit:
+    path: /test
+    defaults:
+        _controller: Herrera\Silex\Test\Controller::test
