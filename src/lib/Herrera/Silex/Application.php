@@ -97,6 +97,7 @@ class Application extends Silex
             'cache' => $path['base'] . '/app/cache',
             'config' => $path['base'] . '/app/config',
             'logs' => $path['base'] . '/app/logs',
+            'translations' => $path['base'] . '/app/translations',
             'views' => $path['base'] . '/app/views',
         );
 

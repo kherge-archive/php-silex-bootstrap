@@ -10,10 +10,15 @@ monolog:
         monolog.logfile: "%path.logs%/%mode%.log"
 
 translation:
-    class: Silex\Provider\TranslationServiceProvider
+    class: Herrera\Silex\Provider\TranslationServiceProvider
     parameters:
         locale: en
         locale_fallback: en
+        translator.files:
+            Symfony\Component\Translation\Loader\YamlFileLoader:
+                "%path.translations%/example.de.yml": "de"
+                "%path.translations%/example.en.yml": "en"
+                "%path.translations%/example.fr.yml": "fr"
 
 twig:
     class: Silex\Provider\TwigServiceProvider
