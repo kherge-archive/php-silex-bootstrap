@@ -12,3 +12,6 @@ twig:
             auto_reload: %debug%
             cache: "%path.cache%/views"
             debug: %debug%
+
+url_generator:
+    class: Silex\Provider\UrlGeneratorServiceProvider
