@@ -33,6 +33,8 @@ use Silex\Application as Silex;
  *       (default: `$base . '/app/config')
  *     - `logs` &mdash; The logs directory path.
  *       (default: `$base . '/app/logs')
+ *     - `translations` &mdash; The translations directory path.
+ *       (default: `$base . '/app/logs')
  *     - `views` &mdash; The views (or templates) directory path.
  *       (default: `$base . '/app/views')
  *
