@@ -1,1 +1,9 @@
-{{ "hello"|trans }}
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <div class="container">
+      <div class="row-fluid">
+        {{ "hello"|trans }}
+      </div>
+    </div>
+{% endblock %}
