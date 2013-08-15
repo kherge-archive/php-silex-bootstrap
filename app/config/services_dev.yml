@@ -4,3 +4,12 @@ imports:
 monolog:
     parameters:
         monolog.level: 100
+
+service_controller:
+    class: Silex\Provider\ServiceControllerServiceProvider
+
+web_profiler:
+    class: Silex\Provider\WebProfilerServiceProvider
+    parameters:
+        profiler.cache_dir: "%path.cache%/profiler"
+        profiler.mount_prefix: "/_profiler"
