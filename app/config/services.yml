@@ -1,8 +1,19 @@
+form:
+    class: Silex\Provider\FormServiceProvider
+    parameters:
+        form.secret: REPLACE_THIS_NOT_SO_SECRET_SECRET
+
 monolog:
     class: Silex\Provider\MonologServiceProvider
     parameters:
         monolog.level: 300
         monolog.logfile: "%path.logs%/%mode%.log"
+
+translation:
+    class: Silex\Provider\TranslationServiceProvider
+    parameters:
+        locale: en
+        locale_fallback: en
 
 twig:
     class: Silex\Provider\TwigServiceProvider
@@ -15,3 +26,6 @@ twig:
 
 url_generator:
     class: Silex\Provider\UrlGeneratorServiceProvider
+
+validator:
+    class: Silex\Provider\ValidatorServiceProvider
