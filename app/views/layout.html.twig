@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+{% block meta %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+    <title>{% block title %}Example{% endblock %}</title>
+{% block stylesheets %}
+    <link href="{{ app.request.baseUrl }}/assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="{{ app.request.baseUrl }}/assets/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="{{ app.request.baseUrl }}/assets/css/font-awesome.min.css" rel="stylesheet" media="screen">
+    <!--[if IE 7]>
+      <link href="{{ app.request.baseUrl }}/assets/css/font-awesome.min.css" rel="stylesheet" media="screen">
+    <![endif]-->
+    <link href="{{ app.request.baseUrl }}/assets/css/example.css" rel="stylesheet" media="screen">
+{% endblock %}
+  </head>
+  <body>
+{% block content %}
+    <h1>This is the default layout template.</h1>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ app.request.baseUrl }}/assets/js/jquery.min.js"></script>
+    <script src="{{ app.request.baseUrl }}/assets/js/jquery-migrate.min.js"></script>
+    <script src="{{ app.request.baseUrl }}/assets/js/bootstrap.min.js"></script>
+{% endblock %}
+  </body>
+</html>
