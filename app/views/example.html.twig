@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
       <div class="row-fluid">
-        <span class="span5 pull-both">
+        <div class="span5 pull-both">
           <form class="form-horizontal" method="post">
             <fieldset>
               <legend>Example Form</legend>
@@ -22,11 +22,12 @@
               </div>
               <div class="form-actions">
                 {{ form_widget(form.set, {'attr': {'class': 'btn btn-primary'}}) }}
+                <a href="{{ path('example') }}" class="btn">Reset</a>
               </div>
             </fieldset>
             {{ form_rest(form) }}
           </form>
-        </span>
+        </div>
       </div>
     </div>
 {% endblock %}
