@@ -1,6 +1,7 @@
 /.idea/
 /bin/
 /coverage/
+/docs/
 /src/vendors/
 
 /*.iml

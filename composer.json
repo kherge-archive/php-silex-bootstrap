@@ -35,6 +35,7 @@
         "herrera-io/go": "~2.0",
         "herrera-io/phpunit-test-case": "~1.0",
         "phpunit/phpunit": "~3.7",
+        "sami/sami": "~1.1",
         "silex/web-profiler": "~1.0"
     },
 

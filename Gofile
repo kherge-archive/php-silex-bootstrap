@@ -66,6 +66,25 @@ task(
 );
 
 task(
+    'generate:docs',
+    'Generates API documentation using Sami.',
+    function (Out $out) {
+        $out->writeln('Generating API documentation...');
+
+        passthru(
+            sprintf(
+                '%s update %s',
+                __DIR__ . '/bin/sami.php',
+                __DIR__ . '/app/config/docs.php'
+            ),
+            $status
+        );
+
+        return $status;
+    }
+);
+
+task(
     'server:run',
     'Runs the application using the internal PHP web server.',
     function (In $in, Out $out) {
