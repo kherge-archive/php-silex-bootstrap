@@ -12,7 +12,7 @@ use Silex\Application as Silex;
  * The bootstrap application class registers the default parameters and
  * services before loading the remaining services, parameters, and routes
  * from the various configuration files. The application is also aware of
- * two environment variables: APP_DEBUG and APP_MODE.
+ * two environment variables: `APP_DEBUG` and `APP_MODE`.
  *
  * - `APP_DEBUG` &mdash; If set to `1`, the debugging mode will be enabled.
  *   using any other value will default to disabling debugging mode. If the
@@ -134,12 +134,15 @@ class Application extends Silex
             )
         );
 
-        $parameters = $this->load(
-            'parameters'
-                . (('prod' == $this['mode']) ? '' : '_' . $this['mode'])
-                . '.'
-                . $this['wise.options']['type']
-        );
+        $file = 'parameters';
+
+        if ('prod' !== $this['mode']) {
+            $file .= '_' . $this['mode'];
+        }
+
+        $file .= '.' . $this['wise.options']['type'];
+
+        $parameters = $this->load($file);
 
         unset($parameters['imports']);
 
