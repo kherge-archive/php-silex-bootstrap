@@ -95,8 +95,8 @@ task(
         $out->write(
             sprintf(
                 '(<fg=yellow>debug:</fg=yellow> <fg=%s>%s</fg=%1$s>',
-                $in->getOption('debug') ? 'red' : 'green',
-                $in->getOption('debug') ? 'off' : 'on'
+                $in->getOption('debug') ? 'green' : 'red',
+                $in->getOption('debug') ? 'on' : 'off'
             )
         );
 
