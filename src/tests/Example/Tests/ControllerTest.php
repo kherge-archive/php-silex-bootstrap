@@ -25,7 +25,7 @@ class ControllerTest extends TestCase
         };
 
         $locales[] = array(
-            'Hallo Welt!',
+            'Hallo world!',
             $request('de')
         );
 
@@ -35,7 +35,7 @@ class ControllerTest extends TestCase
         );
 
         $locales[] = array(
-            'Bonjour tout le monde!',
+            'Bonjour world!',
             $request('fr')
         );
 

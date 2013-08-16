@@ -3,6 +3,7 @@
 namespace Example;
 
 use Herrera\Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * A simple example controller.
@@ -13,9 +14,36 @@ class Controller
 {
     /**
      * Renders the example view.
+     *
+     * @param Application $app     The application.
+     * @param Request     $request The request.
+     *
+     * @return string The rendered view.
      */
-    public static function showView(Application $app)
+    public static function showView(Application $app, Request $request)
     {
-        return $app->render('example.html.twig');
+        $name = 'world';
+        $form = $app
+            ->form()
+            ->add('name', 'text', array('required' => false))
+            ->add('set', 'submit')
+            ->getForm();
+
+        if ('POST' === $request->getMethod()) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $name = $data['name'];
+            }
+        }
+
+        return $app->render(
+            'example.html.twig',
+            array(
+                'form' => $form->createView(),
+                'name' => $name,
+            )
+        );
     }
 }

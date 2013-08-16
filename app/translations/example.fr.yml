@@ -1,1 +1,1 @@
-hello: "Bonjour tout le monde!"
+hello: "Bonjour {name}!"
