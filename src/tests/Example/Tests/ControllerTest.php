@@ -47,8 +47,8 @@ class ControllerTest extends TestCase
      */
     public function testShowView($expected, $request)
     {
-        $this->assertEquals(
-            $expected,
+        $this->assertRegExp(
+            '/' . preg_quote($expected, '/') . '/',
             trim($this->app->handle($request)->getContent())
         );
     }

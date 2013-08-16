@@ -3,3 +3,5 @@ imports:
 
 phpunit:
     class: Herrera\Silex\Test\PhpUnit
+
+web_profiler: ~
