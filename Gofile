@@ -1,7 +1,69 @@
 <?php
 
+use Herrera\Go\Go;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface as In;
 use Symfony\Component\Console\Output\OutputInterface as Out;
+
+task(
+    'clear:all',
+    'Clears all temporary files...',
+    function () {
+        $go = Go::get();
+
+        /** @var Application $console */
+        $console = $go['console'];
+
+        $console->setAutoExit(false);
+
+        $status = 0;
+        $commands = array(
+            'clear:cache',
+            'clear:logs'
+        );
+
+        foreach ($commands as $command) {
+            if (!$console->run(new ArrayInput(array('command' => $command)))) {
+                $status = 1;
+            }
+        }
+
+        return $status;
+    }
+);
+
+task(
+    'clear:cache',
+    'Clears the cache directory.',
+    function (Out $out) {
+        $out->writeln('Clearing the cache...');
+
+        $dir = __DIR__
+            . DIRECTORY_SEPARATOR
+            . 'app'
+            . DIRECTORY_SEPARATOR
+            . 'cache';
+
+        return rmdir_recursive($out, $dir, false) ? 0 : 0;
+    }
+);
+
+task(
+    'clear:logs',
+    'Clears the log directory.',
+    function (Out $out) {
+        $out->writeln('Clearing the logs...');
+
+        $dir = __DIR__
+            . DIRECTORY_SEPARATOR
+            . 'app'
+            . DIRECTORY_SEPARATOR
+            . 'logs';
+
+        return rmdir_recursive($out, $dir, false) ? 0 : 0;
+    }
+);
 
 task(
     'server:run',
@@ -61,3 +123,61 @@ option('error', 'e', OPT_IS_REQUIRED, 'The error log file.');
 option('host', null, OPT_IS_REQUIRED, 'The server host name.', 'localhost');
 option('mode', 'm', OPT_IS_REQUIRED, 'The application mode.', 'prod');
 option('port', 'p', OPT_IS_REQUIRED, 'The server port number.', 8000);
+
+function rmdir_recursive(Out $out, $dir, $delete = true)
+{
+    if (!is_dir($dir)) {
+        $out->writeln(
+            sprintf(
+                '<error>The path "%s" does not exist or is not a directory.</error>',
+                $dir
+            )
+        );
+
+        return false;
+    }
+
+    foreach (scandir($dir) as $item) {
+        if (('.' == $item)
+            || ('..' == $item)
+            || ('.gitignore' == $item)) {
+            continue;
+        }
+
+        $path = $dir . DIRECTORY_SEPARATOR . $item;
+
+        if (is_dir($path)) {
+            rmdir_recursive($out, $path);
+        } else {
+            if (!@unlink($path)) {
+                $error = error_get_last();
+
+                $out->writeln(
+                    sprintf(
+                        '<error>The file "%s" could not be deleted: %s</error>',
+                        $path,
+                        $error['message']
+                    )
+                );
+
+                return false;
+            }
+        }
+    }
+
+    if ($delete && !rmdir($dir)) {
+        $error = error_get_last();
+
+        $out->writeln(
+            sprintf(
+                '<error>The directory "%s" could not be deleted: %s</error>',
+                $dir,
+                $error['message']
+            )
+        );
+
+        return false;
+    }
+
+    return true;
+}
