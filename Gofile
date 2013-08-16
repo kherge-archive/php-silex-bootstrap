@@ -1,202 +1,207 @@
 <?php
 
 use Herrera\Go\Go;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface as In;
 use Symfony\Component\Console\Output\OutputInterface as Out;
 
+/**
+ * Runs the following tasks:
+ *
+ * - clear:cache
+ * - clear:logs
+ */
 task(
     'clear:all',
     'Clears all temporary files...',
     function () {
-        $go = Go::get();
-
-        /** @var Application $console */
-        $console = $go['console'];
-
-        $console->setAutoExit(false);
-
         $status = 0;
-        $commands = array(
-            'clear:cache',
-            'clear:logs'
-        );
+        $status += run('clear:cache');
+        $status += run('clear:logs');
 
-        foreach ($commands as $command) {
-            if (!$console->run(new ArrayInput(array('command' => $command)))) {
-                $status = 1;
-            }
-        }
-
-        return $status;
+        return $status ? 1 : 0;
     }
 );
 
+/**
+ * Removes the contents of the cache directory.
+ */
 task(
     'clear:cache',
     'Clears the cache directory.',
     function (Out $out) {
         $out->writeln('Clearing the cache...');
 
-        $dir = __DIR__
-            . DIRECTORY_SEPARATOR
-            . 'app'
-            . DIRECTORY_SEPARATOR
-            . 'cache';
-
-        return rmdir_recursive($out, $dir, false) ? 0 : 0;
+        purge(__DIR__ . '/app/cache', false);
     }
 );
 
+/**
+ * Removes the contents of the logs directory.
+ */
 task(
     'clear:logs',
     'Clears the log directory.',
     function (Out $out) {
         $out->writeln('Clearing the logs...');
 
-        $dir = __DIR__
-            . DIRECTORY_SEPARATOR
-            . 'app'
-            . DIRECTORY_SEPARATOR
-            . 'logs';
-
-        return rmdir_recursive($out, $dir, false) ? 0 : 0;
+        purge(__DIR__ . '/app/logs', false);
     }
 );
 
+/**
+ * Generates the API documentation.
+ */
 task(
     'generate:docs',
     'Generates API documentation using Sami.',
     function (Out $out) {
         $out->writeln('Generating API documentation...');
 
-        passthru(
-            sprintf(
-                '%s update %s',
-                __DIR__ . '/bin/sami.php',
+        return cmd(
+            __DIR__ . '/bin/sami.php',
+            array(
+                'update',
                 __DIR__ . '/app/config/docs.php'
-            ),
-            $status
+            )
         );
-
-        return $status;
     }
 );
 
+/**
+ * Runs the internal PHP web server.
+ *
+ * Offers the ability to define the application debugging mode and environment
+ * name, the output log path, and enable xdebug for profiling and other tasks.
+ */
 task(
     'server:run',
     'Runs the application using the internal PHP web server.',
     function (In $in, Out $out) {
+        $args = array(
+            '-S', $in->getOption('host') . ':' . $in->getOption('port'),
+            '-t', __DIR__ . '/web',
+        );
+
+        $options = array(
+            'env' => array(
+                'APP_DEBUG=' . ($in->getOption('debug') ? 1 : 0),
+                'APP_MODE=' . $in->getOption('mode'),
+            ),
+        );
+
+        $out->write('<fg=magenta>Running</fg=magenta> on ');
+        $out->write("<fg=cyan>{$args[1]}</fg=cyan> ");
+
+        $out->write(
+            sprintf(
+                '(<fg=yellow>debug:</fg=yellow> <fg=%s>%s</fg=%1$s>',
+                $in->getOption('debug') ? 'red' : 'green',
+                $in->getOption('debug') ? 'off' : 'on'
+            )
+        );
+
         $out->writeln(
             sprintf(
-                'Running on %s:%d (mode: %s, debug: %s)...',
-                $in->getOption('host'),
-                $in->getOption('port'),
-                $in->getOption('mode'),
-                $in->getOption('debug') ? 'on' : 'off'
+                ', <fg=yellow>mode:</fg=yellow> <fg=%s>%s</fg=%1$s>)...',
+                ('prod' == $in->getOption('mode')) ? 'red' : 'green',
+                $in->getOption('mode')
             )
         );
 
-        $logging = '';
-
-        if ($in->getOption('access')) {
-            $logging .= ' >> ' . escapeshellarg($in->getOption('access'));
-
+        if (null !== ($log = $in->getOption('log'))) {
             $out->writeln(
                 sprintf(
-                    'Access Log: %s',
-                    $in->getOption('access')
+                    '<fg=magenta>Logging</fg=magenta> to <fg=cyan>%s</fg=cyan>',
+                    $log
                 )
             );
+
+            $args[] = '>';
+            $args[] = '/dev/null';
+            $args[] = '2>';
+            $args[] = $log;
         }
 
-        if ($in->getOption('error')) {
-            $logging .= ' 2>> ' . escapeshellarg($in->getOption('error'));
-
-            $out->writeln(
-                sprintf(
-                    'Error Log: %s',
-                    $in->getOption('error')
-                )
-            );
+        if (empty($log)) {
+            $out->writeln('');
+            $out->writeln('<fg=cyan>==========</fg=cyan>');
+            $out->writeln('');
         }
 
-        passthru(
-            sprintf(
-                'APP_DEBUG=%d APP_MODE=%s php -S %s:%s -t %s%s',
-                $in->getOption('debug') ? 1 : 0,
-                $in->getOption('mode'),
-                escapeshellarg($in->getOption('host')),
-                escapeshellarg($in->getOption('port')),
-                escapeshellarg(__DIR__ . DIRECTORY_SEPARATOR . 'web'),
-                $logging
-            )
-        );
+        cmd('php', $args, $options);
     }
 );
 
-option('access', 'a', OPT_IS_REQUIRED, 'The access log file.');
 option('debug', 'd', OPT_NO_VALUE, 'Enable debugging?');
-option('error', 'e', OPT_IS_REQUIRED, 'The error log file.');
 option('host', null, OPT_IS_REQUIRED, 'The server host name.', 'localhost');
+option('log', 'l', OPT_IS_REQUIRED, 'The log file.');
 option('mode', 'm', OPT_IS_REQUIRED, 'The application mode.', 'prod');
 option('port', 'p', OPT_IS_REQUIRED, 'The server port number.', 8000);
 
-function rmdir_recursive(Out $out, $dir, $delete = true)
+/**
+ * Executes a command (`passthru()`) and returns its exit status.
+ *
+ * @param string $command   The command name.
+ * @param array  $arguments The command arguments.
+ * @param array  $options   The command options.
+ *
+ * @return integer The status code.
+ */
+function cmd($command, array $arguments = array(), array $options = array())
 {
-    if (!is_dir($dir)) {
-        $out->writeln(
-            sprintf(
-                '<error>The path "%s" does not exist or is not a directory.</error>',
-                $dir
-            )
-        );
+    $string = '';
 
-        return false;
+    if (!empty($options['env'])) {
+        $string .= join(' ', $options['env']) . ' ';
     }
 
-    foreach (scandir($dir) as $item) {
-        if (('.' == $item)
-            || ('..' == $item)
-            || ('.gitignore' == $item)) {
-            continue;
-        }
+    $string .= $command;
 
-        $path = $dir . DIRECTORY_SEPARATOR . $item;
+    if ($arguments) {
+        array_walk(
+            $arguments,
+            function (&$argument) {
 
-        if (is_dir($path)) {
-            rmdir_recursive($out, $path);
-        } else {
-            if (!@unlink($path)) {
-                $error = error_get_last();
-
-                $out->writeln(
-                    sprintf(
-                        '<error>The file "%s" could not be deleted: %s</error>',
-                        $path,
-                        $error['message']
-                    )
-                );
-
-                return false;
+                if (!preg_match('/^\s*\d{0,1}[\|><]/', $argument)) {
+                    $argument = escapeshellarg($argument);
+                }
             }
-        }
-    }
-
-    if ($delete && !rmdir($dir)) {
-        $error = error_get_last();
-
-        $out->writeln(
-            sprintf(
-                '<error>The directory "%s" could not be deleted: %s</error>',
-                $dir,
-                $error['message']
-            )
         );
 
-        return false;
+        $string .= ' ' . join(' ', $arguments);
     }
 
-    return true;
+    passthru($string, $status);
+
+    return $status;
+}
+
+/**
+ * Purges a file or directory.
+ *
+ * @param string  $path The path to purge.
+ * @param boolean $root If directory, delete root folder?
+ * @param array   $keep Keep these files.
+ */
+function purge($path, $root = true, array $keep = array('.gitignore'))
+{
+    if (is_dir($path)) {
+        foreach (scandir($path) as $item) {
+            if (('.' == $item) || ('..' == $item)) {
+                continue;
+            }
+
+            if (in_array($item, $keep)) {
+                continue;
+            }
+
+            purge($path . DIRECTORY_SEPARATOR . $item);
+        }
+
+        if ($root) {
+            rmdir($path);
+        }
+    } else {
+        unlink($path);
+    }
 }
