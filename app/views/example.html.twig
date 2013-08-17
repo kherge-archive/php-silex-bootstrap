@@ -1,32 +1,13 @@
 {% extends "layout.html.twig" %}
 
+{% form_theme form "form/horizontal.html.twig" %}
+
 {% block content %}
     <div class="container">
       <div class="row-fluid">
         <div class="span5 pull-both">
-          <form class="form-horizontal" method="post">
-            <fieldset>
-              <legend>Example Form</legend>
-              <div class="control-group">
-                <label class="control-label">Message</label>
-                <div class="controls">
-                  <span class="input-medium uneditable-input">{{ "hello"|trans({"{name}": name}) }}</span>
-                </div>
-              </div>
-              <div class="control-group">
-                {{ form_label(form.name, null, {'label_attr': {'class': 'control-label'}}) }}
-                <div class="controls">
-                  {{ form_widget(form.name, {'attr': {'class': 'input-medium'}}) }}
-                  {{ form_errors(form.name) }}
-                </div>
-              </div>
-              <div class="form-actions">
-                {{ form_widget(form.set, {'attr': {'class': 'btn btn-primary'}}) }}
-                <a href="{{ path('example') }}" class="btn">Reset</a>
-              </div>
-            </fieldset>
-            {{ form_rest(form) }}
-          </form>
+          <h1 class="page-header">{{ "hello"|trans({"{name}": name}) }}</h1>
+          {{ form(form) }}
         </div>
       </div>
     </div>

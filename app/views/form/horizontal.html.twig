@@ -1,0 +1,154 @@
+{% block attrs %}
+{% for key, value in attr %} {{ key }}="{% if key in ["placeholder", "title"] %}{{ value|trans({}, translation_domain) }}{% else %}{{ value }}{% endif %}"{% endfor %}
+{% endblock %}
+
+{% block widget_attributes %}
+  {% spaceless %}
+    {% if disabled %}
+      {% set attr = attr|merge({"disabled": "disabled"}) %}
+    {% endif %}
+    {% if max_length is defined and max_length %}
+      {% set attr = attr|merge({"maxlength": max_length}) %}
+    {% endif %}
+    {% if pattern is defined and pattern %}
+      {% set attr = attr|merge({"pattern": pattern}) %}
+    {% endif %}
+    {% if read_only is defined and read_only %}
+      {% set attr = attr|merge({"readonly": "readonly"}) %}
+    {% endif %}
+    {% if required is defined and required %}
+      {% set attr = attr|merge({"required": "required"}) %}
+    {% endif %}
+    {% set attr = attr|merge({"id": id, "name": name}) %}
+    {{ block("attrs") }}
+  {% endspaceless %}
+{% endblock %}
+
+{% block button_row %}
+  {% spaceless %}
+    <div class="form-actions">
+      {{ form_widget(form) }}
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block button_widget %}
+  {% spaceless %}
+    {% if label is empty %}
+      {% set label = name|humanize %}
+    {% endif %}
+    {% set attr = attr|merge({"type": type|default("text")}) %}
+    {% set attr = attr|merge({"class": ("btn" ~ attr.class|default(""))|trim}) %}
+    <button{{ block('widget_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
+  {% endspaceless %}
+{% endblock %}
+
+{% block form %}
+  {% spaceless %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_end %}
+  {% spaceless %}
+    {% if (not render_rest is defined) or render_rest %}
+      {{ form_rest(form) }}
+    {% endif %}
+    </form>
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_errors %}
+  {% spaceless %}
+    {% if errors|length > 0 %}
+      <span class="help-block">
+        <ul>
+          {% for error in errors %}
+            <li class="text-error">{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </span>
+    {% endif %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_label %}
+  {% spaceless %}
+    {% if label is not sameas(false) %}
+      {% if not compound %}
+        {% set label_attr = label_attr|merge({'for': id}) %}
+      {% endif %}
+      {% if required %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+      {% endif %}
+      {% if label is empty %}
+        {% set label = name|humanize %}
+      {% endif %}
+      {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label')|trim}) %}
+      {% set attr = label_attr %}
+      <label{{ block("attrs", {"attr": label_attr}) }}>{{ label|trans({}, translation_domain) }}</label>
+    {% endif %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_rest %}
+  {% spaceless %}
+    {% for child in form %}
+      {% if not child.rendered %}
+        {{ form_row(child) }}
+      {% endif %}
+    {% endfor %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_row %}
+  {% spaceless %}
+    <div class="control-group">
+      {{ form_label(form) }}
+      <div class="controls">
+        {{ form_widget(form) }}
+        {{ form_errors(form) }}
+      </div>
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_rows %}
+  {% spaceless %}
+    {% for child in form %}
+      {{ form_row(child) }}
+    {% endfor %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_start %}
+  {% spaceless %}
+    {% set method = method|upper %}
+    {% if method in ["GET", "POST"] %}
+      {% set attr = attr|merge({"method": method|lower}) %}
+    {% else %}
+      {% set attr = attr|merge({"method": "post"}) %}
+    {% endif %}
+    {% set attr = attr|merge({"action": action}) %}
+    {% set attr = attr|merge({"name": form.vars.name}) %}
+    {% set attr = attr|merge({"class": (attr.class|default("") ~ " form-horizontal")|trim}) %}
+    <form{{ block("attrs", {"attr": attr}) }}>
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_widget %}
+  {% spaceless %}
+    {% if compound %}
+      {{ block('form_rows') }}
+      {{ form_rest(form) }}
+    {% else %}
+      {% set attr = attr|merge({"type": type|default("text")}) %}
+      {% if value is not empty %}
+        {% set attr = attr|merge({"value": value}) %}
+      {% endif %}
+      <input{{ block("widget_attributes") }}/>
+    {% endif %}
+  {% endspaceless %}
+{% endblock %}

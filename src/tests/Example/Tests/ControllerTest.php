@@ -2,7 +2,6 @@
 
 namespace Example\Tests;
 
-use Example\Controller;
 use Herrera\PHPUnit\TestCase;
 use Herrera\Silex\Application;
 use Symfony\Component\HttpFoundation\Request;

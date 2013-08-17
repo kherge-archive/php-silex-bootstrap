@@ -25,7 +25,17 @@ class Controller
         $name = 'world';
         $form = $app
             ->form()
-            ->add('name', 'text', array('required' => false))
+            ->add(
+                'name',
+                'text',
+                array(
+                    'attr' => array(
+                        'class' => 'input-medium',
+                        'placeholder' => 'Your name'
+                    ),
+                    'required' => false
+                )
+            )
             ->add('set', 'submit')
             ->getForm();
 
