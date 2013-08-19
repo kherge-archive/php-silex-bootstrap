@@ -113,6 +113,9 @@
     {% set attr = attr|merge({"name": form.vars.name}) %}
     {% set attr = attr|merge({"class": (attr.class|default("") ~ " form-horizontal")|trim}) %}
     <form{{ block("attrs", {"attr": attr}) }}>
+      {% if method|lower != attr.method %}
+        <input type="hidden" name="_method" value="{{ attr.method }}"/>
+      {% endif %}
   {% endspaceless %}
 {% endblock %}
 
