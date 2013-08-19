@@ -148,7 +148,7 @@
     {% if required is defined and required %}
       {% set attr = attr|merge({"required": "required"}) %}
     {% endif %}
-    {% set attr = attr|merge({"id": id, "name": name}) %}
+    {% set attr = attr|merge({"id": id, "name": full_name}) %}
     {{ block("attrs") }}
   {% endspaceless %}
 {% endblock %}
