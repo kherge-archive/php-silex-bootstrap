@@ -15,9 +15,72 @@
     {% if label is empty %}
       {% set label = name|humanize %}
     {% endif %}
-    {% set attr = attr|merge({"type": type|default("text")}) %}
+    {% set attr = attr|merge({"type": type|default("button")}) %}
     {% set attr = attr|merge({"class": ("btn " ~ attr.class|default(""))|trim}) %}
     <button{{ block('widget_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
+  {% endspaceless %}
+{% endblock %}
+
+{% block choice_widget %}
+  {% spaceless %}
+    {% if expanded %}
+      {% for child in form %}
+        <label{{ block('widget_attributes', {"attr": child.vars.label_attr}) }}>
+          {{ form_widget(child) }}
+          {{ child.vars.label|trans({}, translation_domain) }}
+        </label>
+      {% endfor %}
+    {% else %}
+      {{ block('choice_widget_collapsed') }}
+    {% endif %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block collection_widget %}
+  {% spaceless %}
+    <ul class="input-collection" id="{{ id }}" data-counter="0" data-prototype="{% if allow_delete %}&lt;div class=&quot;input-append&quot;&gt;{% endif %}{{ form_widget(prototype)|escape }}{% if allow_delete %} &lt;button class=&quot;btn btn-danger&quot; type=&quot;button&quot;&gt;&lt;i class=&quot;icon-minus-sign&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;{% endif %}">
+      {% if allow_add %}
+        <li class="input-add">
+          <button class="btn btn-success" type="button">
+            <i class="icon-plus-sign"></i>
+          </button>
+        </li>
+      {% endif %}
+    </ul>
+  {% endspaceless %}
+{% endblock %}
+
+{% block date_widget %}
+  {% spaceless %}
+    {% if widget == 'single_text' %}
+      {{ block('form_widget_simple') }}
+    {% else %}
+      <div class="input-merged">
+        {{ date_pattern|replace({
+            '{{ year }}': form_widget(form.year, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Year"|trans({}, translation_domain)})}),
+            '{{ month }}': form_widget(form.month, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Month"|trans({}, translation_domain)})}),
+            '{{ day }}': form_widget(form.day, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Day"|trans({}, translation_domain)})}),
+        })|raw }}
+      </div>
+    {% endif %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block datetime_widget %}
+  {% spaceless %}
+    {% if widget == 'single_text' %}
+      {{ block('form_widget_simple') }}
+    {% else %}
+      <div class="input-merged">
+        {{ form.date.vars.date_pattern|replace({
+            '{{ year }}': form_widget(form.date.year, {"attr": form.vars.attr|merge({"placeholder": "Year"|trans({}, translation_domain)})}),
+            '{{ month }}': form_widget(form.date.month, {"attr": form.vars.attr|merge({"placeholder": "Month"|trans({}, translation_domain)})}),
+            '{{ day }}': form_widget(form.date.day, {"attr": form.vars.attr|merge({"placeholder": "Day"|trans({}, translation_domain)})}),
+        })|raw }}
+      </div>
+      <br/>
+      {{ form_widget(form.time) }}
+    {% endif %}
   {% endspaceless %}
 {% endblock %}
 
@@ -44,7 +107,7 @@
       <span class="help-block">
         <ul>
           {% for error in errors %}
-            <li class="text-error">{{ error }}</li>
+            <li class="text-error">{{ error.message }}</li>
           {% endfor %}
         </ul>
       </span>
@@ -85,7 +148,7 @@
   {% spaceless %}
     <div class="control-group">
       {{ form_label(form) }}
-      <div class="controls">
+      <div class="controls controls-row">
         {{ form_widget(form) }}
         {{ form_errors(form) }}
       </div>
@@ -119,17 +182,71 @@
   {% endspaceless %}
 {% endblock %}
 
-{% block form_widget %}
+{% block form_widget_compound %}
   {% spaceless %}
-    {% if compound %}
-      {{ block('form_rows') }}
-      {{ form_rest(form) }}
+    {{ block('form_rows') }}
+    {{ form_rest(form) }}
+  {% endspaceless %}
+{% endblock %}
+
+{% block form_widget_simple %}
+  {% spaceless %}
+    {% set attr = attr|merge({"type": type|default("text")}) %}
+    {% if value is not empty %}
+      {% set attr = attr|merge({"value": value}) %}
+    {% endif %}
+    {% set help = attr.help|default("") %}
+    <input{{ block("widget_attributes") }}/>
+  {% endspaceless %}
+{% endblock %}
+
+{% block money_widget %}
+  {% spaceless %}
+    <div class="input-prepend">
+      <span class="add-on">
+        {{ money_pattern|replace({" {{ widget }}": ""}) }}
+      </span>
+      {{ block("form_widget") }}
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block percent_widget %}
+  {% spaceless %}
+    <div class="input-append">
+      {{ block("form_widget") }}
+      <span class="add-on">%</span>
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block search_widget %}
+  {% spaceless %}
+    <div class="input-prepend">
+      <span class="add-on">
+        <i class="icon-search"></i>
+      </span>
+      {{ block("form_widget") }}
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block time_widget %}
+  {% spaceless %}
+    {% if widget == 'single_text' %}
+      {{ block('form_widget_simple') }}
     {% else %}
-      {% set attr = attr|merge({"type": type|default("text")}) %}
-      {% if value is not empty %}
-        {% set attr = attr|merge({"value": value}) %}
-      {% endif %}
-      <input{{ block("widget_attributes") }}/>
+      <div class="input-merged">
+        {{ form_widget(form.hour, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Hour"|trans({}, translation_domain)})}) }}
+        {% if with_minutes %}
+          :
+          {{ form_widget(form.minute, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Minute"|trans({}, translation_domain)})}) }}
+        {% endif %}
+        {% if with_seconds %}
+          :
+          {{ form_widget(form.second, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Second"|trans({}, translation_domain)})}) }}
+        {% endif %}
+      </div>
     {% endif %}
   {% endspaceless %}
 {% endblock %}

@@ -2,3 +2,8 @@ example:
     path: /
     defaults:
         _controller: Example\Controller::showView
+
+example_form:
+    path: /form
+    defaults:
+        _controller: Example\Controller::formView
