@@ -36,7 +36,15 @@ class Controller
                     'required' => false
                 )
             )
-            ->add('set', 'submit')
+            ->add(
+                'set',
+                'submit',
+                array(
+                    'attr' => array(
+                        'class' => 'btn-primary'
+                    )
+                )
+            )
             ->getForm();
 
         if ('POST' === $request->getMethod()) {
