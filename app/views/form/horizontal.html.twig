@@ -57,9 +57,9 @@
     {% else %}
       <div class="input-merged">
         {{ date_pattern|replace({
-            '{{ year }}': form_widget(form.year, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Year"|trans({}, translation_domain)})}),
-            '{{ month }}': form_widget(form.month, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Month"|trans({}, translation_domain)})}),
-            '{{ day }}': form_widget(form.day, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Day"|trans({}, translation_domain)})}),
+            '{{ year }}': form_widget(form.year, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "year"|trans({}, translation_domain)})}),
+            '{{ month }}': form_widget(form.month, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "month"|trans({}, translation_domain)})}),
+            '{{ day }}': form_widget(form.day, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "day"|trans({}, translation_domain)})}),
         })|raw }}
       </div>
     {% endif %}
@@ -73,9 +73,9 @@
     {% else %}
       <div class="input-merged">
         {{ form.date.vars.date_pattern|replace({
-            '{{ year }}': form_widget(form.date.year, {"attr": form.vars.attr|merge({"placeholder": "Year"|trans({}, translation_domain)})}),
-            '{{ month }}': form_widget(form.date.month, {"attr": form.vars.attr|merge({"placeholder": "Month"|trans({}, translation_domain)})}),
-            '{{ day }}': form_widget(form.date.day, {"attr": form.vars.attr|merge({"placeholder": "Day"|trans({}, translation_domain)})}),
+            '{{ year }}': form_widget(form.date.year, {"attr": form.vars.attr|merge({"placeholder": "year"|trans({}, translation_domain)})}),
+            '{{ month }}': form_widget(form.date.month, {"attr": form.vars.attr|merge({"placeholder": "month"|trans({}, translation_domain)})}),
+            '{{ day }}': form_widget(form.date.day, {"attr": form.vars.attr|merge({"placeholder": "day"|trans({}, translation_domain)})}),
         })|raw }}
       </div>
       <br/>
@@ -237,14 +237,14 @@
       {{ block('form_widget_simple') }}
     {% else %}
       <div class="input-merged">
-        {{ form_widget(form.hour, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Hour"|trans({}, translation_domain)})}) }}
+        {{ form_widget(form.hour, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "hour"|trans({}, translation_domain)})}) }}
         {% if with_minutes %}
           :
-          {{ form_widget(form.minute, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Minute"|trans({}, translation_domain)})}) }}
+          {{ form_widget(form.minute, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "minute"|trans({}, translation_domain)})}) }}
         {% endif %}
         {% if with_seconds %}
           :
-          {{ form_widget(form.second, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "Second"|trans({}, translation_domain)})}) }}
+          {{ form_widget(form.second, {"attr": form.vars.attr|merge({"class": "input-mini", "placeholder": "second"|trans({}, translation_domain)})}) }}
         {% endif %}
       </div>
     {% endif %}
