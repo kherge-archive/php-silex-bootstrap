@@ -2,28 +2,6 @@
 {% for key, value in attr %} {{ key }}="{% if key in ["placeholder", "title"] %}{{ value|trans({}, translation_domain) }}{% else %}{{ value }}{% endif %}"{% endfor %}
 {% endblock %}
 
-{% block widget_attributes %}
-  {% spaceless %}
-    {% if disabled %}
-      {% set attr = attr|merge({"disabled": "disabled"}) %}
-    {% endif %}
-    {% if max_length is defined and max_length %}
-      {% set attr = attr|merge({"maxlength": max_length}) %}
-    {% endif %}
-    {% if pattern is defined and pattern %}
-      {% set attr = attr|merge({"pattern": pattern}) %}
-    {% endif %}
-    {% if read_only is defined and read_only %}
-      {% set attr = attr|merge({"readonly": "readonly"}) %}
-    {% endif %}
-    {% if required is defined and required %}
-      {% set attr = attr|merge({"required": "required"}) %}
-    {% endif %}
-    {% set attr = attr|merge({"id": id, "name": name}) %}
-    {{ block("attrs") }}
-  {% endspaceless %}
-{% endblock %}
-
 {% block button_row %}
   {% spaceless %}
     <div class="form-actions">
@@ -38,7 +16,7 @@
       {% set label = name|humanize %}
     {% endif %}
     {% set attr = attr|merge({"type": type|default("text")}) %}
-    {% set attr = attr|merge({"class": ("btn" ~ attr.class|default(""))|trim}) %}
+    {% set attr = attr|merge({"class": ("btn " ~ attr.class|default(""))|trim}) %}
     <button{{ block('widget_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
   {% endspaceless %}
 {% endblock %}
@@ -150,5 +128,27 @@
       {% endif %}
       <input{{ block("widget_attributes") }}/>
     {% endif %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block widget_attributes %}
+  {% spaceless %}
+    {% if disabled %}
+      {% set attr = attr|merge({"disabled": "disabled"}) %}
+    {% endif %}
+    {% if max_length is defined and max_length %}
+      {% set attr = attr|merge({"maxlength": max_length}) %}
+    {% endif %}
+    {% if pattern is defined and pattern %}
+      {% set attr = attr|merge({"pattern": pattern}) %}
+    {% endif %}
+    {% if read_only is defined and read_only %}
+      {% set attr = attr|merge({"readonly": "readonly"}) %}
+    {% endif %}
+    {% if required is defined and required %}
+      {% set attr = attr|merge({"required": "required"}) %}
+    {% endif %}
+    {% set attr = attr|merge({"id": id, "name": name}) %}
+    {{ block("attrs") }}
   {% endspaceless %}
 {% endblock %}
