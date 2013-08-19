@@ -82,6 +82,11 @@ task(
             '-t', __DIR__ . '/web',
         );
 
+        if ($in->getOption('test')) {
+            $in->setOption('debug', true);
+            $in->setOption('mode', 'dev');
+        }
+
         $options = array(
             'env' => array(
                 'APP_DEBUG=' . ($in->getOption('debug') ? 1 : 0),
@@ -137,6 +142,7 @@ option('host', null, OPT_IS_REQUIRED, 'The server host name.', 'localhost');
 option('log', 'l', OPT_IS_REQUIRED, 'The log file.');
 option('mode', 'm', OPT_IS_REQUIRED, 'The application mode.', 'prod');
 option('port', 'p', OPT_IS_REQUIRED, 'The server port number.', 8000);
+option('test', 't', OPT_NO_VALUE, 'Enable debugging in "dev" mode.');
 
 /**
  * Executes a command (`passthru()`) and returns its exit status.
