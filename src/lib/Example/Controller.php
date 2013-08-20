@@ -505,8 +505,14 @@ class Controller
     public static function showView(Application $app, Request $request)
     {
         $name = 'world';
-        $form = $app
-            ->form()
+        $form = $app->form(
+            null,
+            array(
+                'intention' => 'example'
+            )
+        );
+
+        $form
             ->add(
                 'name',
                 'text',
@@ -526,8 +532,9 @@ class Controller
                         'class' => 'btn-primary'
                     )
                 )
-            )
-            ->getForm();
+            );
+
+        $form = $form->getForm();
 
         if ('POST' === $request->getMethod()) {
             $form->handleRequest($request);
