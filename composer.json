@@ -16,7 +16,7 @@
     },
 
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4.0",
         "herrera-io/silex-active-link": "~1.0",
         "herrera-io/silex-translation-files": "~1.1",
         "herrera-io/silex-wise": "~2.0",
