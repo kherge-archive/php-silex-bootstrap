@@ -2,40 +2,40 @@
 
 namespace Example\Tests;
 
-use Herrera\PHPUnit\TestCase;
-use Herrera\Silex\Application;
+use Herrera\Silex\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class ControllerTest extends TestCase
 {
-    /**
-     * @var Application
-     */
-    private $app;
-
     public function getLocale()
     {
         $locales = array();
-        $request = function ($locale) {
-            $request = Request::create('/');
-            $request->setLocale($locale);
-
-            return $request;
-        };
 
         $locales[] = array(
             'Hallo world!',
-            $request('de')
+            'de-DE,de;q=0.5'
+        );
+
+        $locales[] = array(
+            'Hallo Welt!',
+            'de-DE,de;q=0.5',
+            'Welt'
         );
 
         $locales[] = array(
             'Hello, world!',
-            $request('en')
+            'en-US,en;q=0.5'
         );
 
         $locales[] = array(
             'Bonjour world!',
-            $request('fr')
+            'fr-FR,fr;q=0.5'
+        );
+
+        $locales[] = array(
+            'Bonjour tout le monde!',
+            'fr-FR,fr;q=0.5',
+            'tout le monde'
         );
 
         return $locales;
@@ -44,21 +44,22 @@ class ControllerTest extends TestCase
     /**
      * @dataProvider getLocale
      */
-    public function testShowView($expected, $request)
+    public function testShowView($expected, $locale, $name = null)
     {
-        $this->assertRegExp(
-            '/' . preg_quote($expected, '/') . '/',
-            trim($this->app->handle($request)->getContent())
-        );
-    }
+        $client = $this->createClient();
 
-    protected function setUp()
-    {
-        $this->app = new Application(
+        $response = $client->request(
+            'GET',
+            '/',
             array(
-                'debug' => true,
-                'mode' => 'test',
+                'name' => $name,
+            ),
+            array(),
+            array(
+                'HTTP_ACCEPT_LANGUAGE' => $locale
             )
-        );
+        )->html();
+
+        $this->assertContains($expected, $response);
     }
 }
