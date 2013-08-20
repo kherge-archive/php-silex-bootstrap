@@ -5,6 +5,7 @@ namespace Herrera\Silex;
 use Herrera\Wise\Silex\WiseTrait;
 use Herrera\Wise\WiseServiceProvider;
 use Silex\Application as Silex;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The bootstrap application class.
@@ -70,6 +71,12 @@ class Application extends Silex
 
         $this->registerDefaultParameters();
         $this->registerDefaultServices();
+
+        $this->before(
+            function (Request $request) {
+                $this['locale'] = array_slice($request->getLanguages(), 0, 1);
+            }
+        );
     }
 
     /**
