@@ -4,4 +4,8 @@ imports:
 phpunit:
     class: Herrera\Silex\Test\PhpUnit
 
+session:
+    parameters:
+        session.test: true
+
 web_profiler: ~

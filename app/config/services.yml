@@ -9,6 +9,9 @@ monolog:
         monolog.level: 300
         monolog.logfile: "%path.logs%/%mode%.log"
 
+session:
+    class: Silex\Provider\SessionServiceProvider
+
 translation:
     class: Herrera\Silex\Provider\TranslationServiceProvider
     parameters:
