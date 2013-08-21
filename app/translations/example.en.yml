@@ -1,7 +1,11 @@
 hello: "Hello, {name}!"
-year: Year
-month: Month
-day: Day
-hour: Hour
-minute: Minute
-second: Second
+
+date:
+    day: Day
+    month: Month
+    year: Year
+
+time:
+    hour: Hour
+    minute: Minute
+    second: Second
