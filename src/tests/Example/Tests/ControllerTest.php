@@ -41,6 +41,22 @@ class ControllerTest extends TestCase
         return $locales;
     }
 
+    public function testFormView()
+    {
+        $client = $this->createClient();
+        $request = $client->request('POST', '/form');
+        $response = $client->submit(
+            $request
+                ->selectButton('Submit')
+                ->form()
+        );
+
+        $html = $response->html();
+
+        $this->assertContains('Submit', $html);
+        $this->assertContains('text-error', $html);
+    }
+
     /**
      * @dataProvider getLocale
      */
