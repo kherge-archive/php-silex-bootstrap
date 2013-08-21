@@ -71,6 +71,7 @@ class Application extends Silex
 
         $this->registerDefaultParameters();
         $this->registerDefaultServices();
+        $this->registerDefaultRoutes();
 
         $this->before(
             function (Request $request) {
@@ -129,6 +130,14 @@ class Application extends Silex
     }
 
     /**
+     * Registers the default application routes.
+     */
+    protected function registerDefaultRoutes()
+    {
+        WiseServiceProvider::registerRoutes($this);
+    }
+
+    /**
      * Registers the default application services.
      */
     protected function registerDefaultServices()
@@ -167,6 +176,5 @@ class Application extends Silex
         }
 
         WiseServiceProvider::registerServices($this);
-        WiseServiceProvider::registerRoutes($this);
     }
 }
