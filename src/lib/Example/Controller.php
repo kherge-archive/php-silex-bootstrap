@@ -37,6 +37,16 @@ class Controller
             )
         );
 
+        // uneditable
+        $form->add(
+            'uneditable',
+            new UneditableType(),
+            array(
+                'data' => 'This field is not editable.',
+                'label' => 'Uneditable'
+            )
+        );
+
         // textarea
         $form->add(
             'textarea',
