@@ -74,7 +74,16 @@ class Application extends Silex
 
         $this->before(
             function (Request $request) {
-                $this['locale'] = array_slice($request->getLanguages(), 0, 1);
+                $language = $request->getLanguages();
+                $language = array_shift($language);
+                $language = preg_split('/[\-_]/', $language);
+                $language = array_shift($language);
+
+                $request->setLocale(
+                    $this['locale'] = $language
+                );
+
+                $this['translator']->setLocale($language);
             }
         );
     }
