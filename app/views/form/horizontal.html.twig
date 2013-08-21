@@ -251,6 +251,13 @@
   {% endspaceless %}
 {% endblock %}
 
+{% block uneditable_widget %}
+  {% spaceless %}
+    {% set attr = attr|merge({"class": (attr.class|default("") ~ " uneditable-input")|trim}) %}
+    <span{{ block("attrs") }}>{{ value }}</span>
+  {% endspaceless %}
+{% endblock %}
+
 {% block widget_attributes %}
   {% spaceless %}
     {% if disabled %}
