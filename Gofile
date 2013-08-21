@@ -11,8 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface as Out;
  * - clear:logs
  */
 task(
-    'clear:all',
-    'Clears all temporary files...',
+    'app:clear',
+    'Clears the cache and logs directories.',
     function () {
         $status = 0;
         $status += run('clear:cache');
@@ -23,36 +23,10 @@ task(
 );
 
 /**
- * Removes the contents of the cache directory.
+ * Generates the API documentation for the application.
  */
 task(
-    'clear:cache',
-    'Clears the cache directory.',
-    function (Out $out) {
-        $out->writeln('Clearing the cache...');
-
-        purge(__DIR__ . '/app/cache', false);
-    }
-);
-
-/**
- * Removes the contents of the logs directory.
- */
-task(
-    'clear:logs',
-    'Clears the log directory.',
-    function (Out $out) {
-        $out->writeln('Clearing the logs...');
-
-        purge(__DIR__ . '/app/logs', false);
-    }
-);
-
-/**
- * Generates the API documentation.
- */
-task(
-    'generate:docs',
+    'app:docs',
     'Generates API documentation using Sami.',
     function (Out $out) {
         $out->writeln('Generating API documentation...');
@@ -68,13 +42,10 @@ task(
 );
 
 /**
- * Runs the internal PHP web server.
- *
- * Offers the ability to define the application debugging mode and environment
- * name, the output log path, and enable xdebug for profiling and other tasks.
+ * Runs the web application using the internal PHP web server.
  */
 task(
-    'server:run',
+    'app:run',
     'Runs the application using the internal PHP web server.',
     function (In $in, Out $out) {
         $args = array(
@@ -88,14 +59,9 @@ task(
             mkdir($in->getOption('save'));
         }
 
-        if ($in->getOption('test')) {
-            $in->setOption('debug', true);
-            $in->setOption('mode', 'dev');
-        }
-
         $options = array(
             'env' => array(
-                'APP_DEBUG=' . ($in->getOption('debug') ? 1 : 0),
+                'APP_DEBUG=' . ($in->getOption('no-debug') ? 0 : 1),
                 'APP_MODE=' . $in->getOption('mode'),
             ),
         );
@@ -106,8 +72,8 @@ task(
         $out->write(
             sprintf(
                 '(<fg=yellow>debug:</fg=yellow> <fg=%s>%s</fg=%1$s>',
-                $in->getOption('debug') ? 'green' : 'red',
-                $in->getOption('debug') ? 'on' : 'off'
+                $in->getOption('no-debug') ? 'red' : 'green',
+                $in->getOption('no-debug') ? 'off' : 'on'
             )
         );
 
@@ -143,13 +109,60 @@ task(
     }
 );
 
-option('debug', 'd', OPT_NO_VALUE, 'Enable debugging?');
 option('host', null, OPT_IS_REQUIRED, 'The server host name.', 'localhost');
 option('log', 'l', OPT_IS_REQUIRED, 'The log file.');
-option('mode', 'm', OPT_IS_REQUIRED, 'The application mode.', 'prod');
+option('mode', 'm', OPT_IS_REQUIRED, 'The application mode.', 'dev');
+option('no-debug', null, OPT_NO_VALUE, 'Disable debugging?');
 option('port', 'p', OPT_IS_REQUIRED, 'The server port number.', 8000);
 option('save', 's', OPT_IS_REQUIRED, 'The session save path.', __DIR__ . '/app/cache/sessions');
-option('test', 't', OPT_NO_VALUE, 'Enable debugging in "dev" mode.');
+
+/**
+ * Runs the web application test suite.
+ */
+task(
+    'app:test',
+    'Runs the PHPUnit test suite.',
+    function (In $in) {
+        $args = array(
+            '--verbose'
+        );
+
+        if ($in->getOption('coverage')) {
+            $args[] = '--coverage-html';
+            $args[] = __DIR__ . '/app/cache/coverage';
+        }
+
+        cmd('bin/phpunit', $args);
+    }
+);
+
+option('coverage', 'c', OPT_NO_VALUE, 'Generate HTML code coverage?');
+
+/**
+ * Removes the contents of the cache directory.
+ */
+task(
+    'clear:cache',
+    'Clears the cache directory.',
+    function (Out $out) {
+        $out->writeln('Clearing the cache...');
+
+        purge(__DIR__ . '/app/cache', false);
+    }
+);
+
+/**
+ * Removes the contents of the logs directory.
+ */
+task(
+    'clear:logs',
+    'Clears the log directory.',
+    function (Out $out) {
+        $out->writeln('Clearing the logs...');
+
+        purge(__DIR__ . '/app/logs', false);
+    }
+);
 
 /**
  * Executes a command (`passthru()`) and returns its exit status.
