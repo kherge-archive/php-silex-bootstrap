@@ -1,1 +1,11 @@
 hello: "Hallo {name}!"
+
+date:
+    day: Dag
+    month: Maand
+    year: Jaar
+
+time:
+    hour: Uur
+    minute: Minuut
+    second: Tweede
