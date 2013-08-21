@@ -47,18 +47,23 @@ class ControllerTest extends TestCase
     public function testShowView($expected, $locale, $name = null)
     {
         $client = $this->createClient();
-
-        $response = $client->request(
+        $request = $client->request(
             'GET',
             '/',
-            array(
-                'name' => $name,
-            ),
             array(),
-            array(
-                'HTTP_ACCEPT_LANGUAGE' => $locale
-            )
-        )->html();
+            array(),
+            array('HTTP_ACCEPT_LANGUAGE' => $locale)
+        );
+
+        if ($name) {
+            $response = $client->submit(
+                $request
+                    ->selectButton('Set')
+                    ->form(array('form[name]' => $name), 'POST')
+            )->html();
+        } else {
+            $response = $request->html();
+        }
 
         $this->assertContains($expected, $response);
     }
