@@ -84,6 +84,18 @@
   {% endspaceless %}
 {% endblock %}
 
+{% block email_widget %}
+  {% spaceless %}
+    <div class="input-prepend">
+      <span class="add-on">
+        <i class="icon-envelope"></i>
+      </span>
+      {% set type = type|default("email") %}
+      {{ block("form_widget") }}
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
 {% block form %}
   {% spaceless %}
     {{ form_start(form) }}
@@ -226,6 +238,7 @@
       <span class="add-on">
         <i class="icon-search"></i>
       </span>
+      {% set type = type|default("search") %}
       {{ block("form_widget") }}
     </div>
   {% endspaceless %}
@@ -248,6 +261,18 @@
         {% endif %}
       </div>
     {% endif %}
+  {% endspaceless %}
+{% endblock %}
+
+{% block url_widget %}
+  {% spaceless %}
+    <div class="input-prepend">
+      <span class="add-on">
+        <i class="icon-globe"></i>
+      </span>
+      {% set type = type|default("url") %}
+      {{ block("form_widget") }}
+    </div>
   {% endspaceless %}
 {% endblock %}
 
