@@ -34,6 +34,7 @@ class Controller
                 'attr' => array(
                     'placeholder' => 'A simple text field.',
                 ),
+                'constraints' => new NotBlank(),
                 'label' => 'Text'
             )
         );
