@@ -22,7 +22,7 @@ class Controller
      *
      * @return string The rendered view.
      */
-    public static function formView(Application $app, Request $request)
+    public static function demoView(Application $app, Request $request)
     {
         $form = $app->form();
 
@@ -515,7 +515,7 @@ class Controller
      *
      * @return string The rendered view.
      */
-    public static function showView(Application $app, Request $request)
+    public static function nameView(Application $app, Request $request)
     {
         $form = $app->form(
             null,

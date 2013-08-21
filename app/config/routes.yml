@@ -1,9 +1,9 @@
 example:
     path: /
     defaults:
-        _controller: Example\Controller::showView
+        _controller: Example\Controller::nameView
 
-example_form:
+example_field_demo:
     path: /form
     defaults:
-        _controller: Example\Controller::formView
+        _controller: Example\Controller::demoView
