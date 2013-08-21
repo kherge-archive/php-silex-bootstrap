@@ -3,6 +3,7 @@
 namespace Example;
 
 use Herrera\Silex\Application;
+use Herrera\Silex\Form\Type\UneditableType;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -522,6 +523,16 @@ class Controller
                         'placeholder' => 'Your name'
                     ),
                     'required' => false
+                )
+            )
+            ->add(
+                'locale',
+                new UneditableType(),
+                array(
+                    'attr' => array(
+                        'class' => 'input-medium',
+                    ),
+                    'data' => $app['locale']
                 )
             )
             ->add(
