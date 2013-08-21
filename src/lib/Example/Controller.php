@@ -5,6 +5,7 @@ namespace Example;
 use Herrera\Silex\Application;
 use Herrera\Silex\Form\Type\UneditableType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * A simple example controller.
@@ -515,7 +516,6 @@ class Controller
      */
     public static function showView(Application $app, Request $request)
     {
-        $name = 'world';
         $form = $app->form(
             null,
             array(
@@ -532,7 +532,8 @@ class Controller
                         'class' => 'input-medium',
                         'placeholder' => 'Your name'
                     ),
-                    'required' => false
+                    'constraints' => new NotBlank(),
+                    'data' => 'world'
                 )
             )
             ->add(
@@ -556,6 +557,7 @@ class Controller
             );
 
         $form = $form->getForm();
+        $name = 'world';
 
         if ('POST' === $request->getMethod()) {
             $form->handleRequest($request);
@@ -570,7 +572,7 @@ class Controller
             'example.html.twig',
             array(
                 'form' => $form->createView(),
-                'name' => $name,
+                'name' => $name
             )
         );
     }
