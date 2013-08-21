@@ -23,10 +23,36 @@ task(
 );
 
 /**
+ * Removes the contents of the cache directory.
+ */
+task(
+    'app:clear:cache',
+    'Clears the cache directory.',
+    function (Out $out) {
+        $out->writeln('Clearing the cache...');
+
+        purge(__DIR__ . '/app/cache', false);
+    }
+);
+
+/**
+ * Removes the contents of the logs directory.
+ */
+task(
+    'app:clear:logs',
+    'Clears the log directory.',
+    function (Out $out) {
+        $out->writeln('Clearing the logs...');
+
+        purge(__DIR__ . '/app/logs', false);
+    }
+);
+
+/**
  * Generates the API documentation for the application.
  */
 task(
-    'app:docs',
+    'app:generate:docs',
     'Generates API documentation using Sami.',
     function (Out $out) {
         $out->writeln('Generating API documentation...');
@@ -137,32 +163,6 @@ task(
 );
 
 option('coverage', 'c', OPT_NO_VALUE, 'Generate HTML code coverage?');
-
-/**
- * Removes the contents of the cache directory.
- */
-task(
-    'clear:cache',
-    'Clears the cache directory.',
-    function (Out $out) {
-        $out->writeln('Clearing the cache...');
-
-        purge(__DIR__ . '/app/cache', false);
-    }
-);
-
-/**
- * Removes the contents of the logs directory.
- */
-task(
-    'clear:logs',
-    'Clears the log directory.',
-    function (Out $out) {
-        $out->writeln('Clearing the logs...');
-
-        purge(__DIR__ . '/app/logs', false);
-    }
-);
 
 /**
  * Executes a command (`passthru()`) and returns its exit status.
