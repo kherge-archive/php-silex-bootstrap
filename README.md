@@ -14,8 +14,13 @@ Configuration
 ### Locations
 
 First, you need to know that parameters, services, and routes are configured
-by using [YAML][] configuration files. These files are loaded through a the
+by using [YAML][] configuration files. These files are loaded through the
 [`WiseServiceProvider`][] service provider in the default environment, `prod`:
+
+> If you know how the service provider works, you will also know that you can
+> completely change the file format used. Instead of using YAML, you can use
+> JSON, XML, INI, or just plain PHP. YAML was used since most of this bootstrap
+> project is already based on Symfony, which heavily uses YAML.
 
 | What       | Where                       |
 | ----------:|:--------------------------- |
@@ -25,7 +30,7 @@ by using [YAML][] configuration files. These files are loaded through a the
 
 For all other environments that are not named `prod`, configuration files will
 have the name of their environment appended to the end of them, but before the
-prefix:
+file extension:
 
 | What       | Where                         |
 | ----------:|:----------------------------- |
@@ -43,7 +48,7 @@ the web application only recognizes three environments:
 - `dev` &mdash; Used for debugging the web application.
 - `test` &mdash; Used for running `PHPUnit` test suites.
 
-If you intend to use the `dev`, `test`, or any mode intended for debugging or
+If you intend to use `dev`, `test`, or any other mode intended for debugging or
 testing, you will also want to set the `APP_DEBUG` variable to `1` (one). This
 will enable debugging mode in Silex.
 
@@ -71,10 +76,12 @@ These are the services registered by default:
 - `Silex\Provider\UrlGeneratorServiceProvider`
 - `Silex\Provider\ValidatorServiceProvider`
 
-The following services are registered when the `dev` environment is used:
+The following services are also registered when the `dev` environment is used:
 
 - `Silex\Provider\ServiceControllerServiceProvider`
 - `Silex\Provider\WebProfilerServiceProvider`
+
+The `test` environment will actually unregister the `WebProfilerServiceProvider`.
 
 ### Customizing
 
@@ -88,7 +95,7 @@ through files is found to be inadequate.
 
 It is likely that you will find that you cannot properly register one or more
 services through a configuration file. For cases such as these, you will want
-to do something like the following in your child class of `Application`:
+to do something like the following in your own `Application` subclass:
 
 ```php
 use Herrera\Silex\Application;
@@ -113,36 +120,38 @@ class MyApplication extends Application
 ```
 
 > You may also just modify the application class in
-> `src/lib/Herrera/Silex/Application`.
+> `src/lib/Herrera/Silex/Application`, instead of creating a new subclass.
+> This may be more convenient for you, but it could complicate maintenance
+> when updates are released to this project.
 
-If you use create your own class, there are two places you need to update in
-order for your class to be used:
+If you create your own subclass, you will need to modify a few instances where
+the original class is used:
 
 1. In `src/lib/Herrera/Silex/Test/TestCase.php`, you will need to modify the
    `TestCase->createApplication()` method so that it returns an instance of
    your class, instead of the default one.
 1. In `web/index.php`, you will need to modify the call to the method
    `Herrera\Silex\Application::create()` so that it calls the same method on
-   your class.
+   your class: `Example\Subclass::create()`
 
 Console
 -------
 
-The web application provides console support through the [`Go`][] build tool.
-You can add, edit, and remove your own console commands by editing the `Gofile`
-in the root directory.
+The web application provides console support through the [Go][] build tool.
+You can add, edit, and remove your own tasks by editing the `Gofile` in the
+root directory.
 
-These are the default commands:
+These are the default tasks:
 
-| Command             | Description                                         |
-| -------------------:|:--------------------------------------------------- |
-| `app:clear`         | Removes the contents of `app/cache` and `app/logs`. |
-| `app:clear:cache`   | Removes the contents of `app/cache`.                |
-| `app:clear:logs`    | Removes the contents of `app/logs`.                 |
-| `app:generate:docs` | Uses [Sami][] to generate API documentation.        |
-| `app:minify`        | Uses [Minify][] to minify JS and CSS assets.        |
-| `app:run`           | Runs your web application using the PHP web server. |
-| `app:test`          | Uses [PHPUnit][] to execute the test suite.         |
+| Command             | Description                                              |
+| -------------------:|:-------------------------------------------------------- |
+| `app:clear`         | Removes the contents of `app/cache` and `app/logs`.      |
+| `app:clear:cache`   | Removes the contents of `app/cache`.                     |
+| `app:clear:logs`    | Removes the contents of `app/logs`.                      |
+| `app:generate:docs` | Uses [Sami][] to generate API documentation.             |
+| `app:minify`        | Uses [Minify][] to minify JS and CSS assets.             |
+| `app:run`           | Runs your web application using the [built-in server][]. |
+| `app:test`          | Uses [PHPUnit][] to execute the test suite.              |
 
 ### Sami
 
@@ -150,18 +159,30 @@ By default, the Sami settings are in `app/config/docs.php`. Sami is configured
 so that the parsed data is stored in `app/cache/docs`, while the final rendered
 result is stored in `docs/` in the root directory.
 
+To generate the API documentation:
+
+```
+$ bin/go app:docs
+```
+
 ### Minify
 
-By default, the configuration file that manages the list of assets to minify
-is found at `app/config/assets.yml`. The configuration file is organized as
-a hash of arrays, where the hash key is the path to the target file, and the
-values in the array are the files that need to be minified and combined.
+By default, the list of assets to minify is in `app/config/assets.yml`. The
+file is organized as an associative array. The key is the path where the
+minified file will be saved, and the value is an array of paths that will be
+minified.
+
+To minify assets:
+
+```
+$ bin/go app:minify
+```
 
 ### PHPUnit
 
-By default, the test cases are kept in `src/tests`. PHPUnit is configured to
-also automatically load classes from that directory if they are not present
-in the `src/lib` directory.
+By default, the test cases are kept in `src/tests`. PHPUnit is also configured
+to automatically load classes from that directory if they are not present in
+the `src/lib` directory.
 
 To launch PHPUnit:
 
@@ -176,15 +197,15 @@ report is stored in `app/cache/coverage`.
 Translations
 ------------
 
-By default, translation files are stored in `app/translations`. Also by default
-the following translation files are registered with the Herrera.io translation
-service provider:
+By default, translation files are stored in `app/translations`. Also by default,
+the following translation files are registered with the translation service
+provider:
 
 - `example.de.yml`
 - `example.en.yml`
 - `example.fr.yml`
 
-To use your own translation files, I recommend read the documentation on the
+To use your own translation files, I recommend reading the documentation on the
 `TranslationServiceProvider` service provider. The service provider will allow
 you do other things such as specify which loader class you need to register in
 order to load your translation files. This means you can use other formats,
@@ -228,9 +249,10 @@ by the theme.
 [YAML]: http://www.yaml.org/
 [`WiseServiceProvider`]: https://github.com/herrera-io/php-silex-wise
 [`Herrera\Silex\Provider\TranslationServiceProvider`]: https://github.com/herrera-io/php-silex-translation-files
-[`Go`]: https://github.com/herrera-io/php-go
+[Go]: https://github.com/herrera-io/php-go
 [Sami]: http://sami.sensiolabs.org
 [Minify]: https://github.com/mrclay/minify
+[built-in server]: http://php.net/manual/en/features.commandline.webserver.php
 [PHPUnit]: http://phpunit.de/manual/current/en/automating-tests.html
 [`TranslationServiceProvider`]: https://github.com/herrera-io/php-silex-translation-files
 [Font Awesome]: http://fontawesome.io/
