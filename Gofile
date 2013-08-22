@@ -1,7 +1,5 @@
 <?php
 
-use MatthiasMullie\Minify\CSS;
-use MatthiasMullie\Minify\JS;
 use Symfony\Component\Console\Input\InputInterface as In;
 use Symfony\Component\Console\Output\OutputInterface as Out;
 use Symfony\Component\Yaml\Yaml;
@@ -81,52 +79,60 @@ task(
     'app:minify',
     'Minifies the web application assets.',
     function (Out $out) {
-        $out->writeln('Minifying assets...');
-
         $assets = Yaml::parse(__DIR__ . '/app/config/assets.yml');
         $verbose = ($out::VERBOSITY_VERBOSE === $out->getVerbosity());
-        $base = __DIR__;
+
+        $out->writeln('Minifying assets...');
 
         foreach ($assets as $target => $sources) {
-            $sources = (array) $sources;
-            $ext = pathinfo($target, PATHINFO_EXTENSION);
-            $ext = strtolower($ext);
-
             if ($verbose) {
-                $out->writeln('  - ' . $target);
+                $out->writeln("  - $target");
             }
 
-            $min = null;
-
-            switch ($ext) {
-                case 'css':
-                    $min = new CSS();
-                    break;
-                case 'js':
-                    $min = new JS();
-                    break;
+            if (!is_absolute_path($target)) {
+                $target = __DIR__ . "/$target";
             }
+
+            file_put_contents($target, '');
 
             foreach ($sources as $source) {
                 if (!is_absolute_path($source)) {
-                    $source = $base . DIRECTORY_SEPARATOR . $source;
+                    $source = __DIR__ . "/$source";
                 }
 
-                $source = realpath($source);
-
-                if (!file_exists($source)) {
-                    throw new Exception(
+                if (!is_file($source)) {
+                    throw new RuntimeException(
                         sprintf(
-                            'The file "%s" does not exist.',
+                            'The path "%s" does not exist or is not a file.',
                             $source
                         )
                     );
                 }
 
-                $min->add($source);
-            }
+                $source = realpath($source);
+                $ext = pathinfo($source, PATHINFO_EXTENSION);
 
-            $min->minify($target, $min::ALL);
+                switch (strtolower($ext)) {
+                    case 'css':
+                        $source = Minify_CSS::minify(
+                            file_get_contents($source)
+                        );
+
+                        break;
+                    case 'js':
+                        $source = JSMin::minify(
+                            file_get_contents($source)
+                        );
+
+                        break;
+                    default:
+                        throw new RuntimeException(
+                            "The file extension \"$ext\" is not supported."
+                        );
+                }
+
+                file_put_contents($target, $source, FILE_APPEND);
+            }
         }
     }
 );
