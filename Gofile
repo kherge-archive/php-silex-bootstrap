@@ -20,8 +20,8 @@ task(
     'Clears the cache and logs directories.',
     function () {
         $status = 0;
-        $status += run('clear:cache');
-        $status += run('clear:logs');
+        $status += run('app:clear:cache');
+        $status += run('app:clear:logs');
 
         return $status ? 1 : 0;
     }
