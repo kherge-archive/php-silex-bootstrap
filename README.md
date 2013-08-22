@@ -8,6 +8,12 @@ the [Bootstrap][] front-end framework. The web application is ready to launch
 and requires minor alterations to get a new project up and running. I suggest
 acquiring a solid understanding of Silex and Bootstrap before proceeding.
 
+To create a new project, run:
+
+```
+$ composer create-project herrera-io/silex-bootstrap myProject/
+```
+
 Configuration
 -------------
 
