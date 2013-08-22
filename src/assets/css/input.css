@@ -1,5 +1,3 @@
-body { margin: 40px 20px; }
-
 .input-collection {
     list-style: none;
     margin: 0;
@@ -24,9 +22,3 @@ body { margin: 40px 20px; }
 
 .input-merged input { border-bottom: 1px solid #999; }
 .input-merged select { width: 75px; }
-
-.pull-both {
-    float: none !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-}

@@ -1,0 +1,7 @@
+body { margin: 40px 20px; }
+
+.pull-both {
+    float: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
