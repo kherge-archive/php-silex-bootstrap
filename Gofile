@@ -85,6 +85,7 @@ task(
 
         $assets = Yaml::parse(__DIR__ . '/app/config/assets.yml');
         $verbose = ($out::VERBOSITY_VERBOSE === $out->getVerbosity());
+        $base = __DIR__;
 
         foreach ($assets as $target => $sources) {
             $sources = (array) $sources;
@@ -107,6 +108,21 @@ task(
             }
 
             foreach ($sources as $source) {
+                if (!is_absolute_path($source)) {
+                    $source = $base . DIRECTORY_SEPARATOR . $source;
+                }
+
+                $source = realpath($source);
+
+                if (!file_exists($source)) {
+                    throw new Exception(
+                        sprintf(
+                            'The file "%s" does not exist.',
+                            $source
+                        )
+                    );
+                }
+
                 $min->add($source);
             }
 

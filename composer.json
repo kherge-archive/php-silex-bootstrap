@@ -32,6 +32,7 @@
     },
 
     "require-dev": {
+        "herrera-io/file-system-functions": "~1.0",
         "herrera-io/go": "~2.0",
         "herrera-io/phpunit-test-case": "~1.0",
         "matthiasmullie/minify": "~1.1.2",
