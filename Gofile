@@ -1,8 +1,15 @@
 <?php
 
-use Herrera\Go\Go;
+use MatthiasMullie\Minify\CSS;
+use MatthiasMullie\Minify\JS;
 use Symfony\Component\Console\Input\InputInterface as In;
 use Symfony\Component\Console\Output\OutputInterface as Out;
+use Symfony\Component\Yaml\Yaml;
+
+// be sure to use the bundled version of Go (we need the autoloader)
+if (realpath($_SERVER['argv'][0]) !== realpath(__DIR__ . '/bin/go')) {
+    die("Please use bin/go.\n");
+}
 
 /**
  * Runs the following tasks:
@@ -64,6 +71,47 @@ task(
                 __DIR__ . '/app/config/docs.php'
             )
         );
+    }
+);
+
+/**
+ * Minifies the web application assets.
+ */
+task(
+    'app:minify',
+    'Minifies the web application assets.',
+    function (Out $out) {
+        $out->writeln('Minifying assets...');
+
+        $assets = Yaml::parse(__DIR__ . '/app/config/assets.yml');
+        $verbose = ($out::VERBOSITY_VERBOSE === $out->getVerbosity());
+
+        foreach ($assets as $target => $sources) {
+            $sources = (array) $sources;
+            $ext = pathinfo($target, PATHINFO_EXTENSION);
+            $ext = strtolower($ext);
+
+            if ($verbose) {
+                $out->writeln('  - ' . $target);
+            }
+
+            $min = null;
+
+            switch ($ext) {
+                case 'css':
+                    $min = new CSS();
+                    break;
+                case 'js':
+                    $min = new JS();
+                    break;
+            }
+
+            foreach ($sources as $source) {
+                $min->add($source);
+            }
+
+            $min->minify($target, $min::ALL);
+        }
     }
 );
 
