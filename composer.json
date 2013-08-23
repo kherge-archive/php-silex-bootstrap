@@ -1,4 +1,5 @@
 {
+    "type": "project",
     "name": "herrera-io/silex-bootstrap",
     "description": "A Silex bootstrap project.",
     "license": "MIT",
